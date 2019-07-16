@@ -14,12 +14,7 @@ namespace Session.Player.PlayerCollision
         {
             base.OnCollision(collision);
             GameController.Instance.CurrencyController.AddCurrency(currency.currencyType, currency.currencyAmount);
-
-            if (!collision.transform.parent)
-                return;
-
-            var movementObject = collision.transform.parent.GetComponent<MovementObject>();
-            SessionController.Instance.MovementObjectsController.ReleaseObject(movementObject);
+            collision.gameObject.SetActive(false);
         }
     }
 }

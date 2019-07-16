@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Session.Player.PlayerCollision
 {
-    [CreateAssetMenu(menuName = "ScriptableObjects/Session/PlayerCollision/PlayerBarrierCollisionItem")]
+    [CreateAssetMenu(menuName = "ScriptableObjects/Session/PlayerCollision/PlayerFinishCollisionItem")]
     public class PlayerFinishCollisionItem : PlayerBaseCollisionItem
     {
         public override void OnCollision(Collision collision)
