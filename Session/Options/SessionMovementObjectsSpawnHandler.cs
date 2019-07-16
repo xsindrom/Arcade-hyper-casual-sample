@@ -10,14 +10,18 @@ namespace Session.Options
         [SerializeField]
         protected int spawnMaxCount;
         [SerializeField]
-        protected float spawnInterval;
+        protected float spawnMinInterval;
+        [SerializeField]
+        protected float spawnMaxInterval;
         [SerializeField]
         protected List<string> filter = new List<string>();
 
         [NonSerialized]
         protected int spawnedCount;
         [NonSerialized]
-        protected TimerData spawnTimerData;
+        protected float spawnInterval;
+        [NonSerialized]
+        protected float spawnPrevInterval;
         [NonSerialized]
         protected List<MovementObject> spawnedObjects = new List<MovementObject>();
 
@@ -26,9 +30,14 @@ namespace Session.Options
             get { return spawnMaxCount; }
         }
 
-        public float SpawnInterval
+        public float SpawnMinInterval
         {
-            get { return spawnInterval; }
+            get { return spawnMinInterval; }
+        }
+
+        public float SpawnMaxInterval
+        {
+            get { return spawnMaxInterval; }
         }
 
         public List<string> Filter
@@ -42,10 +51,16 @@ namespace Session.Options
             set { spawnedCount = value; }
         }
 
-        public TimerData SpawnTimerData
+        public float SpawnInterval
         {
-            get { return spawnTimerData; }
-            set { spawnTimerData = value; }
+            get { return spawnInterval; }
+            set { spawnInterval = value; }
+        }
+
+        public float SpawnPrevInterval
+        {
+            get { return spawnPrevInterval; }
+            set{ spawnPrevInterval = value; }
         }
 
         public List<MovementObject> SpawnedObjects
