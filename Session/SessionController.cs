@@ -14,6 +14,7 @@ namespace Session
         void StartSession();
         void WinSession();
         void LoseSession();
+        void ContinueSession();
     }
 
     public class SessionController : MonoSingleton<SessionController>
@@ -55,6 +56,13 @@ namespace Session
         }
         public event Action<int,int> OnScoresChanged;
 
+        private int scoresMultipler;
+        public int ScoresMultipler
+        {
+            get { return scoresMultipler; }
+            set { scoresMultipler = value; }
+        }
+
         [SerializeField]
         private MovementObjectsController movementObjectsController;
         public MovementObjectsController MovementObjectsController
@@ -62,10 +70,25 @@ namespace Session
             get { return movementObjectsController; }
         }
 
+        [SerializeField]
+        private BonusController bonusController;
+        public BonusController BonusController
+        {
+            get { return bonusController; }
+        }
+
         public override void Init()
         {
             base.Init();
             movementObjectsController.OnMovementObjectPassed += OnBarrierPassed;
+        }
+
+        public void OnBarrierPassed(MovementObject movementObject)
+        {
+            if (movementObject.gameObject.CompareTag(GameConstants.BARRIER_TAG))
+            {
+                Scores += ScoresMultipler;
+            }
         }
 
         public void StartSession()
@@ -83,6 +106,7 @@ namespace Session
                 return;
 
             Scores = 0;
+            ScoresMultipler = 1;
 
             CurrentSessionData = sessionData;
             CurrentSessionData.SessionItem.StartSession();
@@ -103,13 +127,12 @@ namespace Session
             EventManager.Call<ISessionHandler>(x => x.LoseSession());
         }
 
-        public void OnBarrierPassed(MovementObject movementObject)
+        public void ContinueSession()
         {
-            if (movementObject.gameObject.CompareTag(GameConstants.BARRIER_TAG))
-            {
-                Scores++;
-            }
+            CurrentSessionData.SessionItem.StartSession();
+            EventManager.Call<ISessionHandler>(x => x.StartSession());
+            movementObjectsController.Continue();
+            EventManager.Call<ISessionHandler>(x => x.ContinueSession());
         }
-
     }
 }

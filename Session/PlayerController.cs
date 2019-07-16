@@ -28,6 +28,12 @@ namespace Session.Player
         {
             get { return movementProxy; }
         }
+        [SerializeField]
+        private new Collider collider;
+        public Collider Collider
+        {
+            get { return collider; }
+        }
 
         private void OnCollisionEnter(Collision collision)
         {
