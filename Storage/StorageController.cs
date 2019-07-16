@@ -6,12 +6,15 @@ using UnityEngine;
 
 namespace Storage
 {
+    public interface IStorageHandler: IEventHandler
+    {
+        void OnLoad(StorageData data);
+        void OnSave(StorageData data);
+    }
+
     public class StorageController : IDisposable
     {
         public StorageData StorageData { get; set; }
-
-        public event Action<StorageData> OnLoad;
-        public event Action<StorageData> OnSave;
 
         public void Load()
         {
@@ -25,12 +28,12 @@ namespace Storage
                 var json = File.ReadAllText(path);
                 StorageData = JsonUtility.FromJson<StorageData>(json);
             }
-            OnLoad?.Invoke(StorageData);
+            EventManager.Call<IStorageHandler>(x => x.OnLoad(StorageData));
         }
 
         public void Save()
         {
-            OnSave?.Invoke(StorageData);
+            EventManager.Call<IStorageHandler>(x => x.OnSave(StorageData));
 
             var json = JsonUtility.ToJson(StorageData);
             File.WriteAllText($"{Application.persistentDataPath}/data.json", json);
@@ -39,8 +42,6 @@ namespace Storage
         public void Dispose()
         {
             StorageData = null;
-            OnLoad = null;
-            OnSave = null;
         }
     }
 }

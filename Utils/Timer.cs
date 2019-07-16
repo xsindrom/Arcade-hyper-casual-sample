@@ -41,6 +41,14 @@ public class Timer : MonoSingleton<Timer>
         timers.Add(timer);
     }
 
+    public TimerData GetTimer(Predicate<TimerData> predicate)
+    {
+        if (predicate == null)
+            return default;
+
+        return timers.Find(predicate);
+    }
+
     public void RemoveTimer(Predicate<TimerData> predicate)
     {
         if (predicate == null)
@@ -51,17 +59,21 @@ public class Timer : MonoSingleton<Timer>
 
     private void Update()
     {
-        for(int i = 0; i < timers.Count; i++)
+        for (int i = timers.Count - 1; i >= 0; i--)
         {
             var timer = timers[i];
             timer.currentTime += Time.deltaTime;
             timer.fullTime += Time.deltaTime;
-            if(timer.currentTime >= timer.waitTime)
+            if (timer.currentTime >= timer.waitTime)
             {
                 timer.currentTime = 0;
-                timer.Invoke();
+                timers[i] = timer;
+                timers[i].Invoke();
             }
-            timers[i] = timer;
+            else
+            {
+                timers[i] = timer;
+            }
         }
     }
 

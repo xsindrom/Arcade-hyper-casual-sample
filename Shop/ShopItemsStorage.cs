@@ -33,5 +33,18 @@ namespace Shop
         {
             get { return shopItemsData; }
         }
+
+        private void OnEnable()
+        {
+            for(int i = 0; i < shopItemsData.Count; i++)
+            {
+                var data = shopItemsData[i];
+                for(int j = 0; j<data.ShopItems.Count; j++)
+                {
+                    var item = data.ShopItems[j];
+                    item.GroupId = data.Id;
+                }
+            }
+        }
     }
 }

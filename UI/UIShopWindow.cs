@@ -10,25 +10,13 @@ public class UIShopWindow : UIBaseWindow
     [SerializeField]
     private UIShopTab tabTemplate;
 
-    private ShopItemsStorage shopItemsStorage;
-    public ShopItemsStorage ShopItemsStorage
-    {
-        get
-        {
-            if (!shopItemsStorage)
-            {
-                shopItemsStorage = ResourceManager.GetResource<ShopItemsStorage>(GameConstants.PATH_SHOP_ITEMS_STORAGE);
-            }
-            return shopItemsStorage;
-        }
-    }
-
     public override void Init()
     {
         base.Init();
-        for(int i = 0; i < ShopItemsStorage.ShopItemsData.Count; i++)
+        var shopItemsData = GameController.Instance.ShopController.ShopItemsStorage.ShopItemsData;
+        for (int i = 0; i < shopItemsData.Count; i++)
         {
-            var shopItem = ShopItemsStorage.ShopItemsData[i];
+            var shopItem = shopItemsData[i];
             var cloned = Instantiate(tabTemplate, tabs.TabsRoot);
             cloned.Id = shopItem.Id;
             cloned.InitTab();

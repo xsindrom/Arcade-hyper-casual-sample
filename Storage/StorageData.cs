@@ -14,6 +14,8 @@ namespace Storage
         private SessionsData sessionsData = new SessionsData();
         [SerializeField]
         private ShopData shopData = new ShopData();
+        [SerializeField]
+        private AdsData adsData = new AdsData();
 
         public UserData UserData
         {
@@ -28,6 +30,11 @@ namespace Storage
         public ShopData ShopData
         {
             get { return shopData; }
+        }
+
+        public AdsData AdsData
+        {
+            get { return adsData; }
         }
     }
 }

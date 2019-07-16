@@ -25,9 +25,17 @@ public class UICurrencyItem : MonoBehaviour, IUIItem<CurrencyItem>
     [SerializeField]
     private string amountTextFormat = "{0}";
 
+    public Image Icon
+    {
+        get { return icon; }
+    }
+
     public void OnSourceChanged()
     {
         amountText.text = string.Format(amountTextFormat, Source.currencyAmount);
+        if (icon.sprite)
+            return;
+
         var currencyIcons = ResourceManager.GetResource<SpriteResources>(GameConstants.PATH_CURRENCY_SPRITE_RESOURCES);
         if (currencyIcons)
         {

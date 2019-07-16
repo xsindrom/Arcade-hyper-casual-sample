@@ -10,4 +10,6 @@ public class UIConstants
     public const string WINDOW_MISSIONS = "MissionsWindow";
     public const string WINDOW_SHOP = "ShopWindow";
     public const string WINDOW_LOSE_SESSION = "LoseSessionWindow";
+    public const string WINDOW_SESSION = "SessionWindow";
+    public const string WINDOW_REWARD_PREVIEW = "RewardPreviewWindow";
 }

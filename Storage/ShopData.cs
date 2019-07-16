@@ -9,6 +9,13 @@ namespace Storage
     public class ShopData
     {
         [SerializeField]
+        private List<string> activeItems = new List<string>();
+        public List<string> ActiveItems
+        {
+            get { return activeItems; }
+        }
+
+        [SerializeField]
         private List<string> boughtItems = new List<string>();
         public List<string> BoughtItems
         {

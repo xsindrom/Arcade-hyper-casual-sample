@@ -1,10 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Session;
 using Currency;
 namespace Shop
 {
+    public enum State
+    {
+        Locked,
+        Available,
+        Bought,
+        Active
+    }
+
     public abstract class ShopItem : ScriptableObject
     {
         [SerializeField]
@@ -12,7 +21,14 @@ namespace Shop
         [SerializeField]
         protected CurrencyItem price;
         [SerializeField]
+        protected State initialState;
+        [SerializeField]
         protected List<ConditionNode> conditions = new List<ConditionNode>();
+
+        [NonSerialized]
+        protected State state;
+        [NonSerialized]
+        protected string groupId;
 
         public string Id
         {
@@ -24,27 +40,40 @@ namespace Shop
             get { return price; }
         }
 
-        public virtual bool IsAvailable()
+        public State State
         {
-            return conditions.Count == 0 ? true : conditions.TrueForAll(x => x.IsValid());
+            get { return state; }
+            set { state = value; }
         }
 
-        public bool IsBought()
+        public string GroupId
         {
-            return GameController.Instance.StorageController.StorageData.ShopData.BoughtItems.Contains(Id);
+            get { return groupId; }
+            set { groupId = value; }
+        }
+
+        private void OnEnable()
+        {
+            state = initialState;
+        }
+
+        public bool IsValid()
+        {
+            return conditions.Count == 0 ? true : conditions.TrueForAll(x => x.IsValid());
         }
 
         public virtual void Buy()
         {
             if (GameController.Instance.CurrencyController.TrySubstract(Price.currencyType, Price.currencyAmount))
             {
-                GameController.Instance.StorageController.StorageData.ShopData.BoughtItems.Add(Id);
+                GameController.Instance.ShopController.BoughtItems.Add(Id);
+                state = State.Bought;
             }
         }
 
         public virtual void Activate()
         {
-
+            state = State.Active;
         }
     }
 }

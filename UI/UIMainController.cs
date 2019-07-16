@@ -37,6 +37,11 @@ public class UIMainController : MonoSingleton<UIMainController>
         return windowsDict.ContainsKey(windowId) ? windowsDict[windowId] as T : null;
     }
 
+    public UIBaseWindow GetWindow(string windowId)
+    {
+        return windowsDict.ContainsKey(windowId) ? windowsDict[windowId] : null;
+    }
+
     public void AddWindow(UIBaseWindow window)
     {
         if (!window)

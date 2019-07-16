@@ -9,11 +9,18 @@ public class UIMainMenu : UIBaseWindow, ISessionHandler
 {
     [SerializeField]
     private List<UICurrencyItem> uiCurrencyItems = new List<UICurrencyItem>();
+    [SerializeField]
+    private Transform activeDailyBonusButton;
+
+    private DailyBonusController dailyBonusController;
 
     public override void Init()
     {
         base.Init();
         EventManager.AddHandler(this);
+
+        dailyBonusController = GameController.Instance.DailyBonusController;
+        activeDailyBonusButton.gameObject.SetActive(dailyBonusController.IsDailyBonusReady());
 
         var currencyController = GameController.Instance.CurrencyController;
         for(int i = 0; i < currencyController.Currencies.Count; i++)
@@ -22,6 +29,13 @@ public class UIMainMenu : UIBaseWindow, ISessionHandler
             uiCurrencyItems[i].Source = currency;
         }
         currencyController.OnCurrencyChanged += OnCurrencyChanged;
+    }
+
+    public override void OpenWindow()
+    {
+        base.OpenWindow();
+
+        activeDailyBonusButton.gameObject.SetActive(dailyBonusController.IsDailyBonusReady());
     }
 
     public void OnCurrencyChanged(CurrencyType currencyType, int prevAmount, int newAmount)
@@ -79,9 +93,27 @@ public class UIMainMenu : UIBaseWindow, ISessionHandler
         ProcessWindow<UIShopWindow>(selected, UIConstants.WINDOW_SHOP);
     }
 
+    public void OnActiveDailyBonusButtonClick()
+    {
+        var window = UIMainController.Instance.GetWindow<UIFortuneWheelWindow>(UIConstants.WINDOW_FORTUNE);
+        window?.OpenWindow(dailyBonusController.Settings.Pack);
+        activeDailyBonusButton.gameObject.SetActive(false);
+        dailyBonusController.OnGetBonus();
+    }
+
+    public void OnAdsFortuneWheelButtonClick()
+    {
+        GameController.Instance.AdsController.Show(GameConstants.FORTUNE_WHEEL_PLACEMENT);
+    }
+
     public void StartSession()
     {
         CloseWindow();
+    }
+
+    public void ContinueSession()
+    {
+
     }
 
     public void WinSession()

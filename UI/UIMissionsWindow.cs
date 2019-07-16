@@ -38,6 +38,11 @@ public class UIMissionsWindow : UIBaseWindow, ISessionHandler
         CloseWindow();
     }
 
+    public void ContinueSession()
+    {
+        CloseWindow();
+    }
+
     public void LoseSession()
     {
 

@@ -19,6 +19,11 @@ public class Pool<T> : MonoBehaviour where T: MonoBehaviour, IPoolObject
     private List<T> freeObjects = new List<T>();
     private List<T> busyObjects = new List<T>();
 
+    public List<T> Templates
+    {
+        get { return templates; }
+    }
+
     public T GetOrInstantiate(string id)
     {
         var free = freeObjects.FindAll(x => x.Id == id);

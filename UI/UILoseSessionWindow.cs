@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Session;
 using TMPro;
 using Currency;
@@ -12,32 +13,58 @@ public class UILoseSessionWindow : UIBaseWindow, ISessionHandler
     private TMP_Text scoresText;
     [SerializeField]
     private TMP_Text maxScoresText;
+    [SerializeField]
+    private Button adsContinueButton;
+    [SerializeField]
+    private Button currencyContinueButton;
+    [SerializeField]
+    private UICurrencyItem currencyContinueItem;
 
-    private int coinsGained;
+    private bool continueAdsWatched = false;
+    private int currentContinuePriceIndex = 0;
+    private ContinueSessionSettings settings;
+    public ContinueSessionSettings Settings
+    {
+        get
+        {
+            if (!settings)
+            {
+                settings = ResourceManager.GetResource<ContinueSessionSettings>(GameConstants.PATH_CONTINUE_SESSION_SETTINGS);
+            }
+            return settings;
+        }
+    }
 
     public override void Init()
     {
         base.Init();
         EventManager.AddHandler(this);
-        GameController.Instance.CurrencyController.OnCurrencyChanged += OnCurrencyChanged;
     }
 
-    private void OnCurrencyChanged(CurrencyType type, int prevCount, int newCount)
+    public void OnContinueSessionByAdsButtonClick()
     {
-        if (newCount > prevCount && type == CurrencyType.Coins)
+        if(!continueAdsWatched)
         {
-            coinsGained++;
+            continueAdsWatched = true;
+            GameController.Instance.AdsController.Show(Settings.AdsPlacement);
         }
     }
 
-    public void OnSecondLifeButtonClick()
+    public void OnContinueSessionByCurrencyButtonClick()
     {
-
+        var currentPrice = Settings.Prices[Mathf.Clamp(currentContinuePriceIndex, 0, Settings.Prices.Count)];
+        if (GameController.Instance.CurrencyController.TrySubstract(currentPrice.currencyType, currentPrice.currencyAmount))
+        {
+            SessionController.Instance.ContinueSession();
+            currentContinuePriceIndex++;
+        }
     }
 
     public void OnMainMenuButtonClick()
     {
         CloseWindow();
+        currentContinuePriceIndex = 0;
+        continueAdsWatched = false;
         var mainMenu = UIMainController.Instance.GetWindow<UIMainMenu>(UIConstants.WINDOW_MAIN_MENU);
         mainMenu?.OpenWindow();
     }
@@ -47,24 +74,34 @@ public class UILoseSessionWindow : UIBaseWindow, ISessionHandler
         coins.Source = new CurrencyItem()
         {
             currencyType = CurrencyType.Coins,
-            currencyAmount = coinsGained
+            currencyAmount = GameController.Instance.CurrencyController.GetCurrency(CurrencyType.Coins)
         };
         scoresText.text = SessionController.Instance.Scores.ToString();
         maxScoresText.text = $"High: {GameController.Instance.StorageController.StorageData.SessionsData.HighScore}";
-        coinsGained = 0;
-        base.OpenWindow();
-    }
 
-    public void LoseSession()
-    {
-        OpenWindow();
+        adsContinueButton.gameObject.SetActive(!continueAdsWatched);
+        currencyContinueItem.Icon.sprite = null;
+        currencyContinueItem.Source = Settings.Prices[Mathf.Clamp(currentContinuePriceIndex, 0, Settings.Prices.Count)];
+        base.OpenWindow();
     }
 
     public void StartSession()
     {
+
+    }
+
+    public void ContinueSession()
+    {
+        CloseWindow();
+    }
+
+    public void LoseSession()
+    {
+
     }
 
     public void WinSession()
     {
+
     }
 }
